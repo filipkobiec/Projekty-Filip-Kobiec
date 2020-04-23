@@ -21,7 +21,7 @@
   background: #eee;
 }
 
-.block {
+.cell {
     display: flex;
     width: 100px;
     height: 100px;
@@ -33,26 +33,26 @@
     transition: background 0.2s ease-in-out;
   }
 
-#block_0,
-#block_1,
-#block_2 {
+#cell_0,
+#cell_1,
+#cell_2 {
   border-top: none;
 }
 
-#block_0,
-#block_3,
-#block_6 {
+#cell_0,
+#cell_3,
+#cell_6 {
   border-left: none;
 }
 
-#block_6,
-#block_7,
-#block_8 {
+#cell_6,
+#cell_7,
+#cell_8 {
   border-bottom: none;
 }
 
-#block_2,
-#block_5,
-#block_8 {
+#cell_2,
+#cell_5,
+#cell_8 {
   border-right: none;
 }
