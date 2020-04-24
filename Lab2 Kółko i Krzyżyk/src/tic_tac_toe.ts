@@ -21,9 +21,25 @@ class Board{
 
 
     is_win(): boolean {
-        return true
+        // horizontal
+        let cells_to_check = new Set()
+        for (let i = 0; i < 9; i += 3) {
+            cells_to_check.add(this.cells[i].content).add(this.cells[i+1].content).add(this.cells[i+2].content)
+            if (cells_to_check.size === 1 && !cells_to_check.has('')){
+                return true
+            }
+            cells_to_check.clear()
+        }
+        // vertical
+        for (let i = 0; i < 9; i += 3){
+            cells_to_check.add(this.cells[i].content).add(this.cells[i+3].content).add(this.cells[i+6].content)
+            if (cells_to_check.size === 1 && !cells_to_check.has('')){
+                return true
+            }
+            cells_to_check.clear()
+        }
+        return false
     }
-
 }
 
 class Cell{
@@ -35,28 +51,36 @@ class Cell{
     constructor(board: Board, index: number, htmlElement: HTMLDivElement) {
         this.board = board
         this.index = index
+        this.content = ""
         this.htmlElement = htmlElement
         this.htmlElement.onclick = () => this.handle_click()
     }
 
     handle_click() {
-        if (this.htmlElement.innerHTML === "") 
-            if (turn === 0)
+        if (this.content === "") 
+            if (player === 1){
+                this.content = "O"
                 this.htmlElement.innerHTML = "O"
-            else
+            }
+            else{
+                this.content = "X"
                 this.htmlElement.innerHTML = "X"
-        
-        switch_turn(turn)
+            }   
+        switch_player(player)
+        let win = this.board.is_win()
+        if (win == true){
+            alert("Winner: " + player)
+        }
     }
 }
 
-let turn = 0
+let player = 1
 
-const switch_turn = (current_turn: number) => {
-    if (current_turn === 0) 
-        turn = 1
+const switch_player = (current_player: number) => {
+    if (current_player === 1) 
+        player = 2
     else
-        turn = 0
+        player = 1
 }
 
 
