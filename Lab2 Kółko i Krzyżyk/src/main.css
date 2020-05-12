@@ -21,10 +21,6 @@
   background: #eee;
 }
 
-.description {
-  display: block;
-}
-
 .cell {
     display: flex;
     width: 100px;

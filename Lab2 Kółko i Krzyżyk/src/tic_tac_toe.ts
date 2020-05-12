@@ -42,6 +42,23 @@ class Board{
             }
             cells_to_check.clear()
         }
+
+        for (let i = 0; i < 9; i += 4){
+            cells_to_check.add(this.cells[i].content)
+        }
+        if (cells_to_check.size === 1 && !cells_to_check.has('')){
+            return true
+        }
+        
+        cells_to_check.clear()
+
+        for (let i = 2; i < 8; i += 2){
+            cells_to_check.add(this.cells[i].content)
+        }
+        if (cells_to_check.size === 1 && !cells_to_check.has('')){
+            return true
+        }
+          
         return false
     }
 }
