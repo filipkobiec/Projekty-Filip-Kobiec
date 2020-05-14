@@ -11,6 +11,7 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".json"]
   },
+  
   devtool: "inline-source-map",
   plugins: [
     new CopyPlugin([
