@@ -12,6 +12,11 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".json"]
   },
   
+  devServer: {
+    host: '192.168.1.3',
+    https: true
+  },
+
   devtool: "inline-source-map",
   plugins: [
     new CopyPlugin([
