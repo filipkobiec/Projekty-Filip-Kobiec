@@ -6,42 +6,84 @@ export class App {
     }
 
     initialize(){
-        const gameCanvas = new GameCanvas('game', this.boardWidth, this.boardHeight)
+        const gameCanvas = new GameCanvas('game', this.boardWidth, this.boardHeight);
+        const gameLoop = new GameLoop(gameCanvas, this.boardWidth, this.boardHeight);
+        gameLoop.start();
     }
 }
 
-export class GameCanvas{
+    class GameCanvas{
+    readonly ctx: CanvasRenderingContext2D;
+
     constructor(containerId: string, width: number, height: number){
-        this.initialize(containerId, width, height);
+        this.ctx = this.initialize(containerId, width, height);
     }
 
-    initialize(containerId: string, width: number, height: number) {
+    initialize(containerId: string, width: number, height: number): CanvasRenderingContext2D {
         const canvas: HTMLCanvasElement = document.createElement('canvas');
         canvas.width = 400;
         canvas.height = 800;
         canvas.id = 'board'
         const container = document.querySelector('#' + containerId);
         container.appendChild(canvas);
-        const ctx = canvas.getContext('2d');
-        let boardMatrix = this.createBoardMatrix(width, height);
-        this.drawBoard(boardMatrix, ctx);
-
+        return canvas.getContext('2d');
     }
 
-    drawBlock(blockType: BlockType, BlockPosition: BlockPosition, ctx: CanvasRenderingContext2D, color: string): void {
-        ctx.fillStyle = color;
-        ctx.fillRect(BlockPosition.x, BlockPosition.y, 30, 30);
+    drawBlock(blockType: BlockType, blockPosition: BlockPosition, color: string): void {
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(blockPosition.x, blockPosition.y, 30, 30);
     }
 
-    drawBoard(boardMatrix: string[][], ctx: CanvasRenderingContext2D){
+    drawBoard(boardMatrix: string[][]){
         for (let i = 0; i < boardMatrix.length; i++){
             for (let j = 0; j < boardMatrix[i].length; j++){
-                ctx.fillStyle = boardMatrix[i][j];
-                ctx.fillRect(10 + 39*j, 10 + 39*i, 29, 29)
+                this.ctx.fillStyle = boardMatrix[i][j];
+                this.ctx.fillRect(10 + 39*j, 10 + 39*i, 29, 29)
             }
         }
     }
 
+    updateBoard(boardMatrix: string[][], ctx: CanvasRenderingContext2D, activeBlock: Block){
+        const tempBoard = [...boardMatrix];
+        tempBoard[activeBlock.position.y][activeBlock.position.x] = activeBlock.color;
+        this.drawBoard(boardMatrix)
+    }
+}
+
+    class GameLoop{
+    readonly blockSpeed: number;
+    gameCanvas: GameCanvas;
+    boardMatrix: string[][];
+    boardWidth: number;
+    boardHeight: number;
+    activeBlock: Brick;
+
+    constructor(gameCanvas: GameCanvas, width: number, height: number){
+        this.gameCanvas = gameCanvas;
+        this.boardWidth = width;
+        this.boardHeight = height;
+    }
+
+    start(): void{
+        this.boardMatrix = this.createBoardMatrix(this.boardWidth, this.boardHeight);
+        this.activeBlock = this.getRandomBlock();
+        this.gameCanvas.updateBoard(this.boardMatrix, this.gameCanvas.ctx, this.activeBlock);
+        this.loop();
+
+    }
+
+    loop(): void{
+        if (this.activeBlock.position.y === 751){
+            this.boardMatrix[19][0] = this.activeBlock.color;
+            this.activeBlock = this.getRandomBlock();
+        }
+        this.moveBlock(this.activeBlock);
+        this.gameCanvas.updateBoard(this.boardMatrix, this.gameCanvas.ctx, this.activeBlock);
+        setTimeout(() => {
+            requestAnimationFrame(() => this.loop())
+        }, 100);
+    }
+    
     createBoardMatrix(width: number, height: number): string[][]{
         const result: string[][] = [];
         for (let i = 0; i < height; i++){
@@ -52,28 +94,19 @@ export class GameCanvas{
         }
         return result;
     }
-}
 
-export class GameLoop{
-    readonly blockSpeed: number;
-    gameCanvas: GameCanvas;
-    boardMatrix: string[][];
-    boardWidth: number;
-    boardHeight: number;
-    activeBlock: Block;
-
-    constructor(gameCanvas: GameCanvas, width: number, height: number){
-        this.gameCanvas = gameCanvas;
-        this.boardWidth = width;
-        this.boardHeight = height;
+    getRandomBlock(){
+        return  new Brick(BlockType.square, "orange");
     }
 
-    start(): void{
-
+    moveBlock(block: Brick){
+        const position: Position = block.getPosition();
+        position.y += 1;
+        block.setPosition(position)
     }
 }
 
-export interface Block{
+    interface Block{
     readonly type: BlockType;
     readonly color: string;
     position: BlockPosition;
@@ -85,10 +118,10 @@ export interface Block{
     getPosition(): BlockPosition;
 };
 
-export class Brick implements Block{
+    class Brick implements Block{
     readonly type: BlockType;
     readonly color: string;
-    position: BlockPosition;
+    position: Position;
     isActive: boolean;
     width: number;
     height: number;
@@ -96,18 +129,24 @@ export class Brick implements Block{
     constructor(type: BlockType, color: string){
         this.type = type;
         this.color = color;
+        this.position = new Position();
     }
-    setPosition(position: BlockPosition): void{
+    setPosition(position: Position): void{
         this.position = position
     };
-    getPosition(): BlockPosition{
+    getPosition(): Position{
        return this.position;
     };
 }
 
-export interface BlockPosition{
+    interface BlockPosition{
     x: number;
     y: number;
+}
+
+    class Position implements BlockPosition{
+    x = 0;
+    y = 0;
 }
 
 enum BlockType{
