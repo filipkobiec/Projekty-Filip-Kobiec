@@ -1,3 +1,6 @@
+namespace game{
+    
+}
 export class App {
     boardWidth: number = 10;
     boardHeight: number = 20;
@@ -10,6 +13,43 @@ export class App {
         const gameLoop = new GameLoop(gameCanvas, this.boardWidth, this.boardHeight);
         gameLoop.start();
     }
+}
+
+    class Position{
+    x = 0;
+    y = 0;
+}
+
+enum BlockType{
+    square,
+    line
+    }
+    
+class Brick {
+    readonly type: BlockType;
+    readonly color: string;
+    position: Position;
+    isActive: boolean;
+    width: number;
+    height: number;
+    shape: string[][];
+    constructor(type: BlockType, color: string){
+        this.type = type;
+        this.color = color;
+        this.position = new Position();
+        if (type === BlockType.square){
+            this.shape = [
+                [color, color],
+                [color, color]
+            ]
+        }
+    }
+    setPosition(position: Position): void{
+        this.position = position
+    };
+    getPosition(): Position{
+       return this.position;
+    };
 }
 
     class GameCanvas{
@@ -29,11 +69,6 @@ export class App {
         return canvas.getContext('2d');
     }
 
-    drawBlock(blockType: BlockType, blockPosition: BlockPosition, color: string): void {
-        this.ctx.fillStyle = color;
-        this.ctx.fillRect(blockPosition.x, blockPosition.y, 30, 30);
-    }
-
     drawBoard(boardMatrix: string[][]){
         for (let i = 0; i < boardMatrix.length; i++){
             for (let j = 0; j < boardMatrix[i].length; j++){
@@ -43,10 +78,18 @@ export class App {
         }
     }
 
-    updateBoard(boardMatrix: string[][], ctx: CanvasRenderingContext2D, activeBlock: Block){
-        const tempBoard = [...boardMatrix];
-        tempBoard[activeBlock.position.y][activeBlock.position.x] = activeBlock.color;
-        this.drawBoard(boardMatrix)
+    updateBoard(boardMatrix: string[][], ctx: CanvasRenderingContext2D, activeBlock: Brick){
+        const tempBoard: string[][] = [];
+        for (let i = 0; i < boardMatrix.length; i++)
+            tempBoard[i] = boardMatrix[i].slice()
+            const blockX = activeBlock.position.x;
+            const blockY = activeBlock.position.y;
+            for (let i = 0; i < activeBlock.shape.length; i++){
+                for (let j = 0; j < activeBlock.shape[0].length; j++){
+                    tempBoard[blockY + i][blockX + j] = activeBlock.color
+                }
+            }
+        this.drawBoard(tempBoard)
     }
 }
 
@@ -73,15 +116,25 @@ export class App {
     }
 
     loop(): void{
-        if (this.activeBlock.position.y === 751){
-            this.boardMatrix[19][0] = this.activeBlock.color;
+        const blockX = this.activeBlock.position.x;
+        const blockY = this.activeBlock.position.y;
+        if (blockY === 18 || this.boardMatrix[blockY + 2][blockX] !== 'white'){
+            this.boardMatrix[blockY][blockX] = this.activeBlock.color;
+            for (let i = 0; i < this.activeBlock.shape.length; i++){
+                for (let j = 0; j < this.activeBlock.shape[0].length; j++){
+                    this.boardMatrix[blockY + i][blockX+ j] = this.activeBlock.color
+                }
+            }
             this.activeBlock = this.getRandomBlock();
         }
-        this.moveBlock(this.activeBlock);
+        else{
+            this.moveBlock(this.activeBlock);   
+        }
         this.gameCanvas.updateBoard(this.boardMatrix, this.gameCanvas.ctx, this.activeBlock);
-        setTimeout(() => {
-            requestAnimationFrame(() => this.loop())
-        }, 100);
+            setTimeout(() => {
+                requestAnimationFrame(() => this.loop())
+            }, 100);
+
     }
     
     createBoardMatrix(width: number, height: number): string[][]{
@@ -106,50 +159,3 @@ export class App {
     }
 }
 
-    interface Block{
-    readonly type: BlockType;
-    readonly color: string;
-    position: BlockPosition;
-    isActive: boolean;
-    width: number;
-    height: number;
-    shape: number[][];
-    setPosition(position: BlockPosition): void;
-    getPosition(): BlockPosition;
-};
-
-    class Brick implements Block{
-    readonly type: BlockType;
-    readonly color: string;
-    position: Position;
-    isActive: boolean;
-    width: number;
-    height: number;
-    shape: number[][];
-    constructor(type: BlockType, color: string){
-        this.type = type;
-        this.color = color;
-        this.position = new Position();
-    }
-    setPosition(position: Position): void{
-        this.position = position
-    };
-    getPosition(): Position{
-       return this.position;
-    };
-}
-
-    interface BlockPosition{
-    x: number;
-    y: number;
-}
-
-    class Position implements BlockPosition{
-    x = 0;
-    y = 0;
-}
-
-enum BlockType{
-    square,
-    line
-}
