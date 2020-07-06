@@ -27,13 +27,15 @@ export class  GameCanvas{
 
     updateBoard(boardMatrix: string[][], ctx: CanvasRenderingContext2D, activeBlock: Brick){
         const tempBoard: string[][] = [];
+        const brickColor = activeBlock.color;
         for (let i = 0; i < boardMatrix.length; i++)
             tempBoard[i] = boardMatrix[i].slice()
             const blockX = activeBlock.position.x;
             const blockY = activeBlock.position.y;
             for (let i = 0; i < activeBlock.shape.length; i++){
                 for (let j = 0; j < activeBlock.shape[0].length; j++){
-                    tempBoard[blockY + i][blockX + j] = activeBlock.color
+                    if (activeBlock.color === brickColor)
+                        tempBoard[blockY + i][blockX + j] = activeBlock.shape[i][j];
                 }
             }
         this.drawBoard(tempBoard)

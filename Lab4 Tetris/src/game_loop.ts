@@ -27,11 +27,11 @@ export class GameLoop{
     loop(): void{
         const blockX = this.activeBlock.position.x;
         const blockY = this.activeBlock.position.y;
-        if (blockY === 18 || this.boardMatrix[blockY + 2][blockX] !== 'white'){
-            this.boardMatrix[blockY][blockX] = this.activeBlock.color;
+        if (this.checkCollisionOnBottom(this.activeBlock, this.boardMatrix)){
+            const brickColor = this.activeBlock.color;
             for (let i = 0; i < this.activeBlock.shape.length; i++){
                 for (let j = 0; j < this.activeBlock.shape[0].length; j++){
-                    this.boardMatrix[blockY + i][blockX+ j] = this.activeBlock.color
+                    this.boardMatrix[blockY + i][blockX+ j] = this.activeBlock.shape[i][j]
                 }
             }
             this.activeBlock = this.getRandomBlock();
@@ -78,5 +78,33 @@ export class GameLoop{
         const position: Position = block.getPosition();
         position.x -= 1;
         block.setPosition(position)
+    }
+
+    checkBottomCollision(activeBlock: Brick, boardMatrix: string[][] ) {    
+        const lengthOfFigure = activeBlock.shape.length;
+    
+        for (let i = 0; i < lengthOfFigure; i++) {
+            for (let j = 0; j < lengthOfFigure; j++) {
+                const occupied = activeBlock.shape[i][j] !== 'white';
+                if (occupied) {
+                    const notInBoardRange = i + activeBlock.position.y > 19
+                    if (notInBoardRange) {
+                        return true;
+                    }
+                    const collisionWithBrick = boardMatrix[i + activeBlock.position.y][j + activeBlock.position.x] !== 'white';
+                    if (collisionWithBrick) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    checkCollisionOnBottom(activeBlock: Brick, boardMatrix: string[][]) {    
+        activeBlock.position.y++;
+        const status = this.checkBottomCollision(activeBlock, boardMatrix);
+        activeBlock.position.y--;
+        return status;
     }
 }

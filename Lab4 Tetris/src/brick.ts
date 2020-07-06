@@ -12,12 +12,7 @@ export class Brick {
         this.type = type;
         this.color = color;
         this.position = new Position();
-        if (type === BlockType.square){
-            this.shape = [
-                [color, color],
-                [color, color]
-            ]
-        }
+        this.chooseShape(this.type);
     }
     setPosition(position: Position): void{
         this.position = position
@@ -25,4 +20,22 @@ export class Brick {
     getPosition(): Position{
        return this.position;
     };
+
+    chooseShape(type: BlockType): void{
+        const baseColor = 'white'
+        switch (type){
+            case BlockType.square:
+                this.shape = [
+                    [this.color, this.color],
+                    [this.color, this.color]
+                ]
+                break;
+            case BlockType.line:
+                this.shape = [
+                    [baseColor, baseColor, baseColor],
+                    [this.color, this.color, this.color],
+                    [baseColor, baseColor, baseColor],
+                ]
+        }
+    }
 }
