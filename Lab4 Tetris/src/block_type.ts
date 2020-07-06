@@ -1,4 +1,10 @@
 export enum BlockType{
     square,
-    line
+    line,
+    l,
+    rl,
+    z,
+    zr,
+    t
+
 }

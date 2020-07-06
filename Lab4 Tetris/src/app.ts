@@ -19,6 +19,9 @@ export class App {
                     break;
                 case 'KeyA':
                     gameLoop.moveBlockLeft(gameLoop.activeBlock)
+                    break;
+                case 'KeyW':
+                    gameLoop.activeBlock.switchVariant();
             }
         }
         gameLoop.start();

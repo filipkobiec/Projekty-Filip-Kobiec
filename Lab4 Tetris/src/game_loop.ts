@@ -19,7 +19,7 @@ export class GameLoop{
     start(): void{
         this.boardMatrix = this.createBoardMatrix(this.boardWidth, this.boardHeight);
         this.activeBlock = this.getRandomBlock();
-        this.gameCanvas.updateBoard(this.boardMatrix, this.gameCanvas.ctx, this.activeBlock);
+        this.gameCanvas.drawBoard(this.boardMatrix);
         this.loop();
 
     }
@@ -27,22 +27,34 @@ export class GameLoop{
     loop(): void{
         const blockX = this.activeBlock.position.x;
         const blockY = this.activeBlock.position.y;
+        const tempBoard: string[][] = [];
+        const brickColor = this.activeBlock.color;
+        for (let i = 0; i < this.boardMatrix.length; i++){
+            tempBoard[i] = this.boardMatrix[i].slice()
+        }
         if (this.checkCollisionOnBottom(this.activeBlock, this.boardMatrix)){
-            const brickColor = this.activeBlock.color;
             for (let i = 0; i < this.activeBlock.shape.length; i++){
                 for (let j = 0; j < this.activeBlock.shape[0].length; j++){
+                    if (blockY + i < 20 && blockX + j < 10 && this.activeBlock.shape[i][j] !== 'white')
                     this.boardMatrix[blockY + i][blockX+ j] = this.activeBlock.shape[i][j]
                 }
             }
+            this.gameCanvas.drawBoard(this.boardMatrix);
             this.activeBlock = this.getRandomBlock();
-        }
+        }    
         else{
-            this.moveBlockDown(this.activeBlock);   
+            for (let i = 0; i < this.activeBlock.shape.length; i++){
+                for (let j = 0; j < this.activeBlock.shape[0].length; j++){
+                    tempBoard[blockY + i][blockX + j] = this.activeBlock.shape[i][j];
+                }
+            }
+            this.moveBlockDown(this.activeBlock);
+            this.gameCanvas.drawBoard(tempBoard);
         }
-        this.gameCanvas.updateBoard(this.boardMatrix, this.gameCanvas.ctx, this.activeBlock);
-            setTimeout(() => {
-                requestAnimationFrame(() => this.loop())
-            }, 100);
+
+        setTimeout(() => {
+            requestAnimationFrame(() => this.loop())
+        }, 500);
 
     }
     
@@ -58,8 +70,15 @@ export class GameLoop{
     }
 
     getRandomBlock(){
-        return  new Brick(BlockType.square, "orange");
+        const randomColor = this.gameCanvas.colors[Math.floor(Math.random() * this.gameCanvas.colors.length)];
+        const randomBrickNum = this.getRandomNumberBetween(0,6)
+        return  new Brick(randomBrickNum , randomColor);
     }
+
+    getRandomNumberBetween(min: number,max: number){
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
+    
 
     moveBlockDown(block: Brick){
         const position: Position = block.getPosition();

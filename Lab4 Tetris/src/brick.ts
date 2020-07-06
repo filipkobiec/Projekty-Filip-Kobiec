@@ -4,15 +4,18 @@ export class Brick {
     readonly type: BlockType;
     readonly color: string;
     position: Position;
-    isActive: boolean;
     width: number;
     height: number;
+    rotation: number;
+    variant: string[][][];
     shape: string[][];
     constructor(type: BlockType, color: string){
         this.type = type;
         this.color = color;
         this.position = new Position();
-        this.chooseShape(this.type);
+        this.chooseVariant(this.type);
+        this.rotation = 0;
+        this.shape = this.variant[this.rotation];
     }
     setPosition(position: Position): void{
         this.position = position
@@ -21,21 +24,174 @@ export class Brick {
        return this.position;
     };
 
-    chooseShape(type: BlockType): void{
-        const baseColor = 'white'
-        switch (type){
-            case BlockType.square:
-                this.shape = [
-                    [this.color, this.color],
-                    [this.color, this.color]
+    chooseVariant(type: BlockType): void{
+    const w = 'white';
+    const c = this.color;
+    switch (type){
+        case BlockType.square:
+            this.variant = [
+                [
+                    [c, c],
+                    [c, c]
                 ]
-                break;
-            case BlockType.line:
-                this.shape = [
-                    [baseColor, baseColor, baseColor],
-                    [this.color, this.color, this.color],
-                    [baseColor, baseColor, baseColor],
+            ]
+            break;
+        case BlockType.line:
+            this.variant = [
+                [
+                    [w, w, w, w],
+                    [w, w, w, w],
+                    [c, c, c, c],
+                    [w, w, w, w]
+                ],
+                [
+                    [w, c, w, w],
+                    [w, c, w, w],
+                    [w, c, w, w],
+                    [w, c, w, w]
+                ],
+                [
+                    [w, w, w, w],
+                    [c, c, c, c],
+                    [w, w, w, w],
+                    [w, w, w, w]
+                ],
+                [
+                    [w, w, c, w],
+                    [w, w, c, w],
+                    [w, w, c, w],
+                    [w, w, c, w],
                 ]
+            ]
+            case BlockType.l:
+                this.variant = [
+                    [
+                        [w, w, w],
+                        [c, c, c],
+                        [c, w, w]
+                    ],
+                    [
+                        [c, c, w],
+                        [w, c, w],
+                        [w, c, w] 
+                    ],
+                    [
+                        [w, w, c],
+                        [c, c, c],
+                        [w, w, w]
+                    ],
+                    [
+                        [w, c, w],
+                        [w, c, w],
+                        [w, c, c]
+                    ]
+                ]
+                case BlockType.rl:
+                    this.variant = [
+                    [
+                        [w, w, w],
+                        [c, c, c],
+                        [w, w, c]
+                    ],
+                    [
+                        [w, c, w],
+                        [w, c, w],
+                        [c, c, w]
+                    ],
+                    [
+                        [c, w, w],
+                        [c, c, c],
+                        [w, w, w]
+                    ],
+                    [
+                        [w, c, c],
+                        [w, c, w],
+                        [w, c, w]
+                    ]
+                ]
+                case BlockType.z:
+                    this.variant = [
+                        [
+                            [w, w, w],
+                            [c, c, w],
+                            [w, c, c]
+                        ],
+                        [
+                            [w, c, w],
+                            [c, c, w],
+                            [c, w, w]
+                        ],
+                        [
+                            [c, c, w],
+                            [w, c, c],
+                            [w, w, w]
+                        ],
+                        [
+                            [w, w, c],
+                            [w, c, c],
+                            [w, c, w]
+                        ]
+                    ]
+                    case BlockType.zr:
+                        this.variant = [
+                            [
+                                [w, w, w],
+                                [w, c, c],
+                                [c, c, w]
+                            ],
+                            [
+                                [c, w, w],
+                                [c, c, w],
+                                [w, c, w]
+                            ],
+                            [
+                                [w, c, c],
+                                [c, c, w],
+                                [w, w, w]
+                            ],
+                            [
+                                [w, c, w],
+                                [w, c, c],
+                                [w, w, c]
+                            ]
+                        ]
+                        case BlockType.t:
+                            this.variant = [
+                                [
+                                    [w, w, w],
+                                    [c, c, c],
+                                    [w, c, w]
+                                ],
+                                [
+                                    [w, c, w],
+                                    [c, c, w],
+                                    [w, c, w]
+                                ],
+                                [
+                                    [w, c, w],
+                                    [c, c, c],
+                                    [w, w, w]  
+                                ],
+                                [
+                                    [w, c, w],
+                                    [w, c, c],
+                                    [w, c, w]
+                                ]
+                            ]
+            
         }
+    }
+
+    switchVariant(){
+        const nextPhase = this.rotation + 1;
+        if (nextPhase < this.variant.length){
+            this.shape = this.variant[nextPhase];
+            this.rotation++;
+        }
+        else{
+            this.shape = this.variant[0]
+            this.rotation = 0;
+        }
+
     }
 }

@@ -1,9 +1,11 @@
 import {Brick} from "./brick"
 export class  GameCanvas{
     readonly ctx: CanvasRenderingContext2D;
+    colors: string[];
 
     constructor(containerId: string, width: number, height: number){
         this.ctx = this.initialize(containerId, width, height);
+        this.colors = ['blue', 'orange', 'red', 'purple', 'green'] 
     }
 
     initialize(containerId: string, width: number, height: number): CanvasRenderingContext2D {
@@ -23,21 +25,5 @@ export class  GameCanvas{
                 this.ctx.fillRect(10 + 39*j, 10 + 39*i, 29, 29)
             }
         }
-    }
-
-    updateBoard(boardMatrix: string[][], ctx: CanvasRenderingContext2D, activeBlock: Brick){
-        const tempBoard: string[][] = [];
-        const brickColor = activeBlock.color;
-        for (let i = 0; i < boardMatrix.length; i++)
-            tempBoard[i] = boardMatrix[i].slice()
-            const blockX = activeBlock.position.x;
-            const blockY = activeBlock.position.y;
-            for (let i = 0; i < activeBlock.shape.length; i++){
-                for (let j = 0; j < activeBlock.shape[0].length; j++){
-                    if (activeBlock.color === brickColor)
-                        tempBoard[blockY + i][blockX + j] = activeBlock.shape[i][j];
-                }
-            }
-        this.drawBoard(tempBoard)
     }
 }
