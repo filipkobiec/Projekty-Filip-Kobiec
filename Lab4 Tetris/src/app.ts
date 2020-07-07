@@ -11,19 +11,7 @@ export class App {
     initialize(){
         const gameCanvas = new GameCanvas('game', this.boardWidth, this.boardHeight);
         const gameLoop = new GameLoop(gameCanvas, this.boardWidth, this.boardHeight);
-        document.addEventListener('keypress', e => move(e.code));
-        function move(key: any){
-            switch (key){
-                case 'KeyD':
-                    gameLoop.moveBlockRight(gameLoop.activeBlock)
-                    break;
-                case 'KeyA':
-                    gameLoop.moveBlockLeft(gameLoop.activeBlock)
-                    break;
-                case 'KeyW':
-                    gameLoop.activeBlock.switchVariant();
-            }
-        }
+        document.addEventListener('keypress', e => gameLoop.move(e.code));
         gameLoop.start();
     }
 }

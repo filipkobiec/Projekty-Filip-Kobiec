@@ -63,6 +63,7 @@ export class Brick {
                     [w, w, c, w],
                 ]
             ]
+            break;
             case BlockType.l:
                 this.variant = [
                     [
@@ -86,6 +87,7 @@ export class Brick {
                         [w, c, c]
                     ]
                 ]
+                break;
                 case BlockType.rl:
                     this.variant = [
                     [
@@ -109,6 +111,7 @@ export class Brick {
                         [w, c, w]
                     ]
                 ]
+                break;
                 case BlockType.z:
                     this.variant = [
                         [
@@ -132,6 +135,7 @@ export class Brick {
                             [w, c, w]
                         ]
                     ]
+                    break;
                     case BlockType.zr:
                         this.variant = [
                             [
@@ -155,6 +159,7 @@ export class Brick {
                                 [w, w, c]
                             ]
                         ]
+                        break;
                         case BlockType.t:
                             this.variant = [
                                 [

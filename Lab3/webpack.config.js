@@ -13,7 +13,7 @@ module.exports = {
   },
   
   devServer: {
-    host: '192.168.1.3',
+    host: '192.168.1.129',
     https: true
   },
 

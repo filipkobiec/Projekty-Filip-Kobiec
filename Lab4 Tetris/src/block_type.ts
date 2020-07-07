@@ -6,5 +6,4 @@ export enum BlockType{
     z,
     zr,
     t
-
 }

@@ -6,6 +6,7 @@ export class GameLoop{
     readonly blockSpeed: number;
     gameCanvas: GameCanvas;
     boardMatrix: string[][];
+    tempBoard: string[][];
     boardWidth: number;
     boardHeight: number;
     activeBlock: Brick;
@@ -20,17 +21,18 @@ export class GameLoop{
         this.boardMatrix = this.createBoardMatrix(this.boardWidth, this.boardHeight);
         this.activeBlock = this.getRandomBlock();
         this.gameCanvas.drawBoard(this.boardMatrix);
-        this.loop();
+        setInterval(() => this.loop(), 100);
+        setInterval(() => this.moveAndRotate(), 50)
 
     }
 
     loop(): void{
         const blockX = this.activeBlock.position.x;
         const blockY = this.activeBlock.position.y;
-        const tempBoard: string[][] = [];
+        this.tempBoard = [];
         const brickColor = this.activeBlock.color;
         for (let i = 0; i < this.boardMatrix.length; i++){
-            tempBoard[i] = this.boardMatrix[i].slice()
+            this.tempBoard[i] = this.boardMatrix[i].slice()
         }
         if (this.checkCollisionOnBottom(this.activeBlock, this.boardMatrix)){
             for (let i = 0; i < this.activeBlock.shape.length; i++){
@@ -45,17 +47,29 @@ export class GameLoop{
         else{
             for (let i = 0; i < this.activeBlock.shape.length; i++){
                 for (let j = 0; j < this.activeBlock.shape[0].length; j++){
-                    tempBoard[blockY + i][blockX + j] = this.activeBlock.shape[i][j];
+                    if (this.activeBlock.shape[i][j] !== 'white')
+                        this.tempBoard[blockY + i][blockX + j] = this.activeBlock.shape[i][j];
                 }
             }
             this.moveBlockDown(this.activeBlock);
-            this.gameCanvas.drawBoard(tempBoard);
+            this.gameCanvas.drawBoard(this.tempBoard);
         }
+    }
 
-        setTimeout(() => {
-            requestAnimationFrame(() => this.loop())
-        }, 500);
-
+    moveAndRotate(): void{
+        const blockX = this.activeBlock.position.x;
+        const blockY = this.activeBlock.position.y;
+        this.tempBoard = [];
+        for (let i = 0; i < this.boardMatrix.length; i++){
+            this.tempBoard[i] = this.boardMatrix[i].slice()
+        }
+        for (let i = 0; i < this.activeBlock.shape.length; i++){
+            for (let j = 0; j < this.activeBlock.shape[0].length; j++){
+                if (this.activeBlock.shape[i][j] !== 'white')
+                    this.tempBoard[blockY + i][blockX + j] = this.activeBlock.shape[i][j];
+            }
+        }
+        this.gameCanvas.drawBoard(this.tempBoard)
     }
     
     createBoardMatrix(width: number, height: number): string[][]{
@@ -75,10 +89,24 @@ export class GameLoop{
         return  new Brick(randomBrickNum , randomColor);
     }
 
-    getRandomNumberBetween(min: number,max: number){
+    getRandomNumberBetween(min: number,max: number): number{
         return Math.floor(Math.random()*(max-min+1)+min);
     }
-    
+
+    move(key: any){
+        switch (key){
+            case 'KeyD':
+                if (!this.checkCollisionOnSides(true, this.activeBlock, this.boardMatrix))
+                this.moveBlockRight(this.activeBlock)
+                break;
+            case 'KeyA':
+                if (!this.checkCollisionOnSides(false, this.activeBlock, this.boardMatrix))
+                this.moveBlockLeft(this.activeBlock)
+                break;
+            case 'KeyW':
+                this.activeBlock.switchVariant();
+        }
+    }
 
     moveBlockDown(block: Brick){
         const position: Position = block.getPosition();
@@ -126,4 +154,33 @@ export class GameLoop{
         activeBlock.position.y--;
         return status;
     }
+
+    checkCollisionOnSides(isRight: boolean, activeBlock: Brick, boardMatrix: string[][]) {    
+        isRight === true ? activeBlock.position.x++ : activeBlock.position.x--;
+        const status = this.checkSideCollision(activeBlock, boardMatrix);
+        isRight === true ? activeBlock.position.x-- : activeBlock.position.x++;
+        return status;
+    }
+
+    checkSideCollision(activeBlock: Brick, boardMatrix: string[][]) {    
+        const lengthOfFigure = activeBlock.shape.length;
+    
+        for (let i = 0; i < lengthOfFigure; i++) {
+            for (let j = 0; j < lengthOfFigure; j++) {
+                const occupied = activeBlock.shape[i][j] !== 'white';
+                if (occupied) {
+                    const notInBoardRange = j + activeBlock.position.x < 0 || 9 < j + activeBlock.position.x
+                    if (notInBoardRange) {
+                        return true;
+                    }
+                    const collisionWithBrick = boardMatrix[i + activeBlock.position.y][j + activeBlock.position.x] !== 'white';
+                    if (collisionWithBrick) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
 }
