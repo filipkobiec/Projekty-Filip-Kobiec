@@ -2,11 +2,11 @@ import {GameCanvas} from "./game_canvas"
 import {Brick} from "./brick"
 import {BlockType} from "./block_type"
 import {Position} from "./position"
+import {Cell} from "./cell"
 export class GameLoop{
     readonly blockSpeed: number;
     gameCanvas: GameCanvas;
-    boardMatrix: string[][];
-    tempBoard: string[][];
+    boardMatrix: Cell[][];
     boardWidth: number;
     boardHeight: number;
     activeBlock: Brick;
@@ -29,16 +29,15 @@ export class GameLoop{
     loop(): void{
         const blockX = this.activeBlock.position.x;
         const blockY = this.activeBlock.position.y;
-        this.tempBoard = [];
         const brickColor = this.activeBlock.color;
-        for (let i = 0; i < this.boardMatrix.length; i++){
-            this.tempBoard[i] = this.boardMatrix[i].slice()
-        }
+
         if (this.checkCollisionOnBottom(this.activeBlock, this.boardMatrix)){
             for (let i = 0; i < this.activeBlock.shape.length; i++){
                 for (let j = 0; j < this.activeBlock.shape[0].length; j++){
-                    if (blockY + i < 20 && blockX + j < 10 && this.activeBlock.shape[i][j] !== 'white')
-                    this.boardMatrix[blockY + i][blockX+ j] = this.activeBlock.shape[i][j]
+                    if (blockY + i < 20 && blockX + j < 10 && this.activeBlock.shape[i][j] !== 'white'){
+                        this.boardMatrix[blockY + i][blockX+ j].color = this.activeBlock.shape[i][j]
+                        this.boardMatrix[blockY + i][blockX+ j].isSet = true
+                    }
                 }
             }
             this.gameCanvas.drawBoard(this.boardMatrix);
@@ -48,39 +47,46 @@ export class GameLoop{
             for (let i = 0; i < this.activeBlock.shape.length; i++){
                 for (let j = 0; j < this.activeBlock.shape[0].length; j++){
                     if (this.activeBlock.shape[i][j] !== 'white')
-                        this.tempBoard[blockY + i][blockX + j] = this.activeBlock.shape[i][j];
+                        this.boardMatrix[blockY + i][blockX + j].color = this.activeBlock.shape[i][j];
                 }
             }
             this.moveBlockDown(this.activeBlock);
-            this.gameCanvas.drawBoard(this.tempBoard);
+            this.gameCanvas.drawBoard(this.boardMatrix);
+            this.clearBoardMatrix()
         }
     }
 
     moveAndRotate(): void{
         const blockX = this.activeBlock.position.x;
         const blockY = this.activeBlock.position.y;
-        this.tempBoard = [];
-        for (let i = 0; i < this.boardMatrix.length; i++){
-            this.tempBoard[i] = this.boardMatrix[i].slice()
-        }
         for (let i = 0; i < this.activeBlock.shape.length; i++){
             for (let j = 0; j < this.activeBlock.shape[0].length; j++){
                 if (this.activeBlock.shape[i][j] !== 'white')
-                    this.tempBoard[blockY + i][blockX + j] = this.activeBlock.shape[i][j];
+                    this.boardMatrix[blockY + i][blockX + j].color = this.activeBlock.shape[i][j];
             }
         }
-        this.gameCanvas.drawBoard(this.tempBoard)
+        this.gameCanvas.drawBoard(this.boardMatrix);
+        this.clearBoardMatrix();
     }
     
-    createBoardMatrix(width: number, height: number): string[][]{
-        const result: string[][] = [];
+    createBoardMatrix(width: number, height: number): Cell[][]{
+        const result: Cell[][] = [];
         for (let i = 0; i < height; i++){
             result[i] = [];
             for (let j = 0; j < width; j++){
-                result[i][j] = "white";
+                result[i][j] = new Cell();
             }
         }
         return result;
+    }
+
+    clearBoardMatrix(){
+        for (let i = 0; i < this.boardMatrix.length; i++){
+            for (let j = 0; j < this.boardMatrix[0].length; j++){
+                if (!this.boardMatrix[i][j].isSet)
+                    this.boardMatrix[i][j].color = 'white'
+            }
+        }
     }
 
     getRandomBlock(){
@@ -127,7 +133,7 @@ export class GameLoop{
         block.setPosition(position)
     }
 
-    checkBottomCollision(activeBlock: Brick, boardMatrix: string[][] ) {    
+    checkBottomCollision(activeBlock: Brick, boardMatrix: Cell[][] ) {    
         const lengthOfFigure = activeBlock.shape.length;
     
         for (let i = 0; i < lengthOfFigure; i++) {
@@ -138,7 +144,7 @@ export class GameLoop{
                     if (notInBoardRange) {
                         return true;
                     }
-                    const collisionWithBrick = boardMatrix[i + activeBlock.position.y][j + activeBlock.position.x] !== 'white';
+                    const collisionWithBrick = boardMatrix[i + activeBlock.position.y][j + activeBlock.position.x].color !== 'white';
                     if (collisionWithBrick) {
                         return true;
                     }
@@ -148,21 +154,21 @@ export class GameLoop{
         return false;
     }
     
-    checkCollisionOnBottom(activeBlock: Brick, boardMatrix: string[][]) {    
+    checkCollisionOnBottom(activeBlock: Brick, boardMatrix: Cell[][]) {    
         activeBlock.position.y++;
         const status = this.checkBottomCollision(activeBlock, boardMatrix);
         activeBlock.position.y--;
         return status;
     }
 
-    checkCollisionOnSides(isRight: boolean, activeBlock: Brick, boardMatrix: string[][]) {    
+    checkCollisionOnSides(isRight: boolean, activeBlock: Brick, boardMatrix: Cell[][]) {    
         isRight === true ? activeBlock.position.x++ : activeBlock.position.x--;
         const status = this.checkSideCollision(activeBlock, boardMatrix);
         isRight === true ? activeBlock.position.x-- : activeBlock.position.x++;
         return status;
     }
 
-    checkSideCollision(activeBlock: Brick, boardMatrix: string[][]) {    
+    checkSideCollision(activeBlock: Brick, boardMatrix: Cell[][]) {    
         const lengthOfFigure = activeBlock.shape.length;
     
         for (let i = 0; i < lengthOfFigure; i++) {
@@ -173,7 +179,7 @@ export class GameLoop{
                     if (notInBoardRange) {
                         return true;
                     }
-                    const collisionWithBrick = boardMatrix[i + activeBlock.position.y][j + activeBlock.position.x] !== 'white';
+                    const collisionWithBrick = boardMatrix[i + activeBlock.position.y][j + activeBlock.position.x].color !== 'white';
                     if (collisionWithBrick) {
                         return true;
                     }

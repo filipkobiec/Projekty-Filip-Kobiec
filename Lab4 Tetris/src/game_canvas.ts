@@ -1,4 +1,5 @@
 import {Brick} from "./brick"
+import { Cell } from "./cell";
 export class  GameCanvas{
     readonly ctx: CanvasRenderingContext2D;
     colors: string[];
@@ -18,10 +19,10 @@ export class  GameCanvas{
         return canvas.getContext('2d');
     }
 
-    drawBoard(boardMatrix: string[][]){
+    drawBoard(boardMatrix: Cell[][]){
         for (let i = 0; i < boardMatrix.length; i++){
             for (let j = 0; j < boardMatrix[i].length; j++){
-                this.ctx.fillStyle = boardMatrix[i][j];
+                this.ctx.fillStyle = boardMatrix[i][j].color;
                 this.ctx.fillRect(10 + 39*j, 10 + 39*i, 29, 29)
             }
         }
