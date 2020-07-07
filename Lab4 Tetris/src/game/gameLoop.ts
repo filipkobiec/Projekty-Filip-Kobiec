@@ -1,42 +1,51 @@
 import {GameCanvas} from "./gameCanvas"
 import {Brick} from "../objects/brick"
-import {Position} from "../objects/position"
+import {MovementController} from "../controllers/movementController"
 import {Cell} from "../objects/cell"
 import {CollisionController} from "../controllers/collisionController"
 export class GameLoop{
     readonly blockSpeed: number;
     gameCanvas: GameCanvas;
+    nextBrickCanvas: GameCanvas;
     boardMatrix: Cell[][];
     boardWidth: number;
     boardHeight: number;
     activeBlock: Brick;
+    nextBlock: Brick
     collisionController: CollisionController
+    movementController: MovementController;
 
-    constructor(gameCanvas: GameCanvas, width: number, height: number){
+    constructor(gameCanvas: GameCanvas, nextBrickCanvas: GameCanvas, width: number, height: number){
         this.gameCanvas = gameCanvas;
+        this.nextBrickCanvas = nextBrickCanvas;
         this.boardWidth = width;
         this.boardHeight = height;
         this.collisionController = new CollisionController;
+        this.movementController = new MovementController;
     }
 
     start(): void{
         this.boardMatrix = this.createBoardMatrix(this.boardWidth, this.boardHeight);
         this.activeBlock = this.getRandomBlock();
+        this.nextBlock = this.getRandomBlock();
         this.gameCanvas.drawBoard(this.boardMatrix);
+        this.nextBrickCanvas.drawNextBrick(this.nextBlock.shape);
         setInterval(() => this.loop(), 100);
         setInterval(() => this.moveAndRotate(), 50)
-
     }
 
     loop(): void{
         if (this.collisionController.checkCollisionOnBottom(this.activeBlock, this.boardMatrix)){
             this.saveBrickToMatrix();
+            this.updateRows();
             this.gameCanvas.drawBoard(this.boardMatrix);
-            this.activeBlock = this.getRandomBlock();
+            this.activeBlock = this.nextBlock;
+            this.nextBlock = this.getRandomBlock();
+            this.nextBrickCanvas.drawNextBrick(this.nextBlock.shape)
         }    
         else{
             this.saveBrickBeforeClear()
-            this.moveBlockDown(this.activeBlock);
+            this.movementController.moveBlockDown(this.activeBlock);
             this.gameCanvas.drawBoard(this.boardMatrix);
             this.clearBoardMatrix()
         }
@@ -98,37 +107,19 @@ export class GameLoop{
         return Math.floor(Math.random()*(max-min+1)+min);
     }
 
-    move(key: any){
-        switch (key){
-            case 'KeyD':
-                if (!this.collisionController.checkCollisionOnSides(true, this.activeBlock, this.boardMatrix))
-                this.moveBlockRight(this.activeBlock)
-                break;
-            case 'KeyA':
-                if (!this.collisionController.checkCollisionOnSides(false, this.activeBlock, this.boardMatrix))
-                this.moveBlockLeft(this.activeBlock)
-                break;
-            case 'KeyW':
-                this.activeBlock.switchVariant();
+    checkRow(cell: Cell){
+        return cell.color !== 'white'
+    }
+
+    updateRows(){
+        for (let i = 0; i < this.boardMatrix.length; i++){
+            if (this.boardMatrix[i].every(this.checkRow)){
+                this.boardMatrix.splice(i, 1)
+                const tempArr: Cell[] = [];
+                for (let j = 0; j < 10; j++)
+                    tempArr.push(new Cell)
+                this.boardMatrix.unshift(tempArr);
+            }
         }
     }
-
-    moveBlockDown(block: Brick){
-        const position: Position = block.getPosition();
-        position.y += 1;
-        block.setPosition(position)
-    }
-
-    
-    moveBlockRight(block: Brick){
-        const position: Position = block.getPosition();
-        position.x += 1;
-        block.setPosition(position)
-    }
-
-    moveBlockLeft(block: Brick){
-        const position: Position = block.getPosition();
-        position.x -= 1;
-        block.setPosition(position)
-    } 
 }

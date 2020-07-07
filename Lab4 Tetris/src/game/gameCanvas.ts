@@ -10,8 +10,8 @@ export class  GameCanvas{
 
     initialize(containerId: string, width: number, height: number): CanvasRenderingContext2D {
         const canvas: HTMLCanvasElement = document.createElement('canvas');
-        canvas.width = 400;
-        canvas.height = 800;
+        canvas.width = width;
+        canvas.height = height;
         canvas.id = 'board'
         const container = document.querySelector('#' + containerId);
         container.appendChild(canvas);
@@ -23,6 +23,15 @@ export class  GameCanvas{
             for (let j = 0; j < boardMatrix[i].length; j++){
                 this.ctx.fillStyle = boardMatrix[i][j].color;
                 this.ctx.fillRect(10 + 39*j, 10 + 39*i, 29, 29)
+            }
+        }
+    }
+
+    drawNextBrick(brickMatrix: string[][]){
+        for (let i = 0; i < brickMatrix.length; i++){
+            for (let j = 0; j < brickMatrix[0].length; j++){
+                this.ctx.fillStyle = brickMatrix[i][j];
+                this.ctx.fillRect(3 + 10*j, 3 + 10* i, 8, 8)
             }
         }
     }
