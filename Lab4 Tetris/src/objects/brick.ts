@@ -4,6 +4,12 @@ export class Brick {
     readonly type: BlockType;
     readonly color: string;
     position: Position;
+    public get posX() : number {
+        return this.position.x
+    }
+    public get posY() : number {
+        return this.position.y
+    }
     width: number;
     height: number;
     rotation: number;
@@ -23,6 +29,19 @@ export class Brick {
     getPosition(): Position{
        return this.position;
     };
+
+    switchVariant(){
+        const nextPhase = this.rotation + 1;
+        if (nextPhase < this.variant.length){
+            this.shape = this.variant[nextPhase];
+            this.rotation++;
+        }
+        else{
+            this.shape = this.variant[0]
+            this.rotation = 0;
+        }
+
+    }
 
     chooseVariant(type: BlockType): void{
     const w = 'white';
@@ -185,18 +204,5 @@ export class Brick {
                             ]
             
         }
-    }
-
-    switchVariant(){
-        const nextPhase = this.rotation + 1;
-        if (nextPhase < this.variant.length){
-            this.shape = this.variant[nextPhase];
-            this.rotation++;
-        }
-        else{
-            this.shape = this.variant[0]
-            this.rotation = 0;
-        }
-
     }
 }

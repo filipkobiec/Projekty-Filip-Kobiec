@@ -1,5 +1,4 @@
-import {Brick} from "./brick"
-import { Cell } from "./cell";
+import { Cell } from "../objects/cell";
 export class  GameCanvas{
     readonly ctx: CanvasRenderingContext2D;
     colors: string[];

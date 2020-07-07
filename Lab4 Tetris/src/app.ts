@@ -1,5 +1,5 @@
-import { GameLoop } from './game_loop';
-import { GameCanvas } from './game_canvas';
+import { GameLoop } from './game/gameLoop';
+import { GameCanvas } from './game/gameCanvas';
 
 export class App {
     boardWidth: number = 10;
