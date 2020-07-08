@@ -6,7 +6,6 @@ export class MovementController{
         position.y += 1;
         block.setPosition(position)
     }
-
     
     moveBlockRight(block: Brick){
         const position: Position = block.getPosition();

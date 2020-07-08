@@ -4,9 +4,6 @@ import { GameCanvas } from './game/gameCanvas';
 export class App {
     boardWidth: number = 10;
     boardHeight: number = 20;
-    constructor() {
-        this.initialize()
-    }
 
     initialize(){
         const gameCanvas = new GameCanvas('game', 400, 800);

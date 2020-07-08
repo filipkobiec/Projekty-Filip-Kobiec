@@ -17,7 +17,7 @@ export class  GameCanvas{
         container.appendChild(canvas);
         return canvas.getContext('2d');
     }
-
+    // magic numbers
     drawBoard(boardMatrix: Cell[][]){
         for (let i = 0; i < boardMatrix.length; i++){
             for (let j = 0; j < boardMatrix[i].length; j++){

@@ -30,7 +30,7 @@ export class GameLoop{
         this.nextBlock = this.getRandomBlock();
         this.gameCanvas.drawBoard(this.boardMatrix);
         this.nextBrickCanvas.drawNextBrick(this.nextBlock.shape);
-        setInterval(() => this.loop(), 100);
+        setInterval(() => this.loop(), 200);
         setInterval(() => this.moveAndRotate(), 50)
     }
 
@@ -57,6 +57,7 @@ export class GameLoop{
         this.clearBoardMatrix();
     }
     
+    // color na const
     saveBrickToMatrix(): void{
         for (let i = 0; i < this.activeBlock.shape.length; i++){
             for (let j = 0; j < this.activeBlock.shape[0].length; j++){
@@ -112,6 +113,7 @@ export class GameLoop{
     }
 
     updateRows(){
+        // funkcja dla for for
         for (let i = 0; i < this.boardMatrix.length; i++){
             if (this.boardMatrix[i].every(this.checkRow)){
                 this.boardMatrix.splice(i, 1)
