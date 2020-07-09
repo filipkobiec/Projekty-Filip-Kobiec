@@ -22,7 +22,7 @@ export class CollisionController{
         }
         return false;
     }
-    // nie poczebne
+    
     checkCollisionOnBottom(activeBlock: Brick, boardMatrix: Cell[][]) {    
         activeBlock.position.y++;
         const status = this.checkBottomCollision(activeBlock, boardMatrix);

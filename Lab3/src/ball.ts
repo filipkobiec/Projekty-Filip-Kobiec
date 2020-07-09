@@ -11,4 +11,9 @@ export class Ball extends Circle{
         ){
         super(x, y, radius, htmlElement)
     }   
+    resetToDefault(x:number, y:number, radius:number){
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
 }

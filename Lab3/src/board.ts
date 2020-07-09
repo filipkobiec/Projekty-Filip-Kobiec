@@ -3,8 +3,11 @@ import {Circle} from "./circle"
 export class Board{
     ball: Ball;
     hole: Circle;
+    startX = 40;
+    startY = 50;
+    startR = 20
     constructor(){
-        this.ball = new Ball(40, 50, 20, document.querySelector('#ball'))
+        this.ball = new Ball(this.startX, this.startY, this.startR, document.querySelector('#ball'))
         this.hole = new Circle(100, 100, 40, document.querySelector('#hole'))
         window.addEventListener('deviceorientation', e => this.onDeviceOrientationChange(e))
     }
@@ -31,8 +34,9 @@ export class Board{
     checkCollision() {
         if (this.ball.x>this.hole.x-this.hole.radius && this.ball.x<this.hole.x+this.hole.radius){
             if (this.ball.y>this.hole.y-this.hole.radius && this.ball.y<this.hole.y+this.hole.radius){
-                this.ball.htmlElement.style.width = 0 + 'px'
-                
+                alert("You loose");
+                this.ball.resetToDefault(this.startX, this.startY, this.startR);
+
             }
         }
     }

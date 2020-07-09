@@ -3,6 +3,7 @@ import {Brick} from "../objects/brick"
 import {MovementController} from "../controllers/movementController"
 import {Cell} from "../objects/cell"
 import {CollisionController} from "../controllers/collisionController"
+import { GameState } from "../objects/gameState"
 export class GameLoop{
     readonly blockSpeed: number;
     gameCanvas: GameCanvas;
@@ -14,6 +15,9 @@ export class GameLoop{
     nextBlock: Brick
     collisionController: CollisionController
     movementController: MovementController;
+    gameState: GameState = GameState.stop;
+    points: number = 0;
+
 
     constructor(gameCanvas: GameCanvas, nextBrickCanvas: GameCanvas, width: number, height: number){
         this.gameCanvas = gameCanvas;
@@ -22,6 +26,9 @@ export class GameLoop{
         this.boardHeight = height;
         this.collisionController = new CollisionController;
         this.movementController = new MovementController;
+    }
+    setGameState(newState: GameState){
+        this.gameState = newState;
     }
 
     start(): void{
@@ -117,6 +124,8 @@ export class GameLoop{
         for (let i = 0; i < this.boardMatrix.length; i++){
             if (this.boardMatrix[i].every(this.checkRow)){
                 this.boardMatrix.splice(i, 1)
+                this.points += 10;
+                document.querySelector('#points').innerHTML = `Points: ${this.points}`
                 const tempArr: Cell[] = [];
                 for (let j = 0; j < 10; j++)
                     tempArr.push(new Cell)

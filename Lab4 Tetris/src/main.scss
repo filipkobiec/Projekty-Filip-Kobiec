@@ -4,4 +4,10 @@ body {
 
 #board {
   background-color: black;
+  margin: 10px;
+}
+
+#game {
+  display: flex;
+  align-items: flex-start;
 }
