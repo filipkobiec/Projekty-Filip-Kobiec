@@ -17,6 +17,49 @@ export class Board{
             let cell = new Cell(i, htmlCell);
             this.cells.push(cell);
         }
+        document.addEventListener('keypress', e => this.on_key_down(e.code))
+    }
+    
+    on_key_down(key: any){
+        switch (key){
+            case "KeyQ":
+                this.markPlayerMove(0);
+                break;
+            case "KeyW":
+                this.markPlayerMove(1);
+                break;
+            case "KeyE":
+                this.markPlayerMove(2);
+                break;
+            case "KeyA":
+                this.markPlayerMove(3);
+                break;
+            case "KeyS":
+                this.markPlayerMove(4);
+                break;
+            case "KeyD":
+                this.markPlayerMove(5);
+                break;
+            case "KeyZ":
+                this.markPlayerMove(6);
+                break;
+            case "KeyX":
+                this.markPlayerMove(7);
+                break;
+            case "KeyC":
+                this.markPlayerMove(8);
+                break;
+        }
+        let win = this.is_win()
+        if (win == true){
+            alert("Winner: " + this.player)
+            if (this.player == 1)
+                this.player_one += 1
+            else
+                this.player_two += 1
+            this.reset_board();
+        }
+        this.switch_player(this.player);
     }
 
     handle_click(i: number) {
@@ -53,6 +96,12 @@ export class Board{
         board.innerHTML += `<div>player two points: ${this.player_two}</div>`
     }
 
+    markPlayerMove(cellIndex: number){
+        if (this.player === 1 )
+            this.cells[cellIndex].content = "O";
+        else
+            this.cells[cellIndex].content = "X"
+    }
 
     is_win(): boolean {
         // horizontal
