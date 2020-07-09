@@ -8,8 +8,8 @@ export class Cell{
     public get content() : "" | "X" | "O"{
         return this._content;
     }
-    public set content(v : "" | "X" | "O") {
-        this._content = v;
-        this.htmlElement.innerHTML = v;
+    public set content(c : ""| "X" | "O") {
+        this._content = c;
+        this.htmlElement.innerHTML = c;
     }
 }

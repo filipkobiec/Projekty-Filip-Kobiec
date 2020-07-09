@@ -13,7 +13,6 @@ export class Board{
         this.draw_board();
         for (let i = 0; i < 9; i++){
             let htmlCell = document.getElementById("cell_" + (i));
-            htmlCell.onclick =  () => this.handle_click(i)
             let cell = new Cell(i, htmlCell);
             this.cells.push(cell);
         }
@@ -52,35 +51,25 @@ export class Board{
         }
         let win = this.is_win()
         if (win == true){
+            this.switch_player(this.player);
             alert("Winner: " + this.player)
-            if (this.player == 1)
+            if (this.player == 1){
                 this.player_one += 1
-            else
-                this.player_two += 1
-            this.reset_board();
-        }
-        this.switch_player(this.player);
-    }
-
-    handle_click(i: number) {
-        if (this.cells[i].content === "") 
-            if (this.player === 1){
-                this.cells[i].content = "O"
+                document.querySelector("#playerOne").innerHTML = `player one  points: ${this.player_one}`;
             }
             else{
-                this.cells[i].content = "X"
-            }   
-        let win = this.is_win()
-        if (win == true){
-            alert("Winner: " + this.player)
-            if (this.player == 1)
-                this.player_one += 1
-            else
                 this.player_two += 1
+                document.querySelector("#playerTwo").innerHTML = `player two  points: ${this.player_two}`;
+            }
+            if (this.player_one == 10 || this.player_two === 10){
+                alert(`Final winner is ${this.player}`)
+                this.player_one = 0;
+                document.querySelector("#playerOne").innerHTML = `player one  points: ${this.player_one}`;
+                this.player_two = 0;
+                document.querySelector("#playerTwo").innerHTML = `player two  points: ${this.player_two}`;
+            }
             this.reset_board();
         }
-        this.switch_player(this.player)
-        document.getElementById("current_player").innerHTML = `player: ${this.player}`
     }
     draw_board() {
         const board = document.querySelector(".board");
@@ -92,15 +81,19 @@ export class Board{
             board.appendChild(row);
         }
         board.innerHTML += `<div id="current_player">player: ${this.player}</div>`
-        board.innerHTML += `<div>player one  points: ${this.player_one}</div>`
-        board.innerHTML += `<div>player two points: ${this.player_two}</div>`
+        board.innerHTML += `<div id = "playerOne">player one  points: ${this.player_one}</div>`
+        board.innerHTML += `<div id = "playerTwo">player two points: ${this.player_two}</div>`
     }
 
     markPlayerMove(cellIndex: number){
-        if (this.player === 1 )
-            this.cells[cellIndex].content = "O";
-        else
-            this.cells[cellIndex].content = "X"
+        if (this.cells[cellIndex].content === ""){
+            if (this.player === 1 )
+                this.cells[cellIndex].content = "O";
+            else
+                this.cells[cellIndex].content = "X"
+            this.switch_player(this.player);
+            document.getElementById("current_player").innerHTML = `player: ${this.player}`
+        }
     }
 
     is_win(): boolean {
@@ -143,10 +136,8 @@ export class Board{
 
     reset_board(){
         for (let i = 0; i < this.cells.length; i++){
-            this.cells[i].content = '';
+            this.cells[i].content ="";
         }
-        this.draw_board();
-        this.start_game();
     }
 
     switch_player = (current_player: number) => {
