@@ -51,8 +51,7 @@ export class Board{
                 this.markPlayerMove(8);
                 break;
         }
-        let win = this.is_win()
-        if (win == true){
+        if (this.is_win()){
             this.switch_player(this.player);
             alert("Winner: " + this.player)
             if (this.player == 1){
@@ -70,6 +69,11 @@ export class Board{
                 this.player_two = 0;
                 playerTwo.innerHTML = `player two  points: ${this.player_two}`;
             }
+            this.reset_board();
+        }
+        else if (this.isDraw()){
+            this.switch_player;
+            alert("Draw")
             this.reset_board();
         }
     }
@@ -99,7 +103,6 @@ export class Board{
     }
 
     is_win(): boolean {
-        // horizontal
         let cells_to_check = new Set()
         for (let i = 0; i < 9; i += 3) {
             cells_to_check.add(this.cells[i].content).add(this.cells[i+1].content).add(this.cells[i+2].content)
@@ -108,7 +111,6 @@ export class Board{
             }
             cells_to_check.clear()
         }
-        // vertical
         for (let i = 0; i < 3; i ++){
             cells_to_check.add(this.cells[i].content).add(this.cells[i+3].content).add(this.cells[i+6].content)
             if (cells_to_check.size === 1 && !cells_to_check.has('')){
@@ -140,6 +142,15 @@ export class Board{
         for (let i = 0; i < this.cells.length; i++){
             this.cells[i].content ="";
         }
+    }
+
+    isDraw(): boolean{
+        for (let i = 0; i < this.cells.length; i++){
+            if(this.cells[i].content === ""){
+                return false;
+            }
+        }
+        return true;
     }
 
     switch_player = (current_player: number) => {
