@@ -21,7 +21,7 @@ export class Board{
 
     update(): void {
         this.animate();
-        this.checkCollision(); 
+        this.checkCollison(); 
         window.requestAnimationFrame(() => this.update()); 
     }
 
@@ -31,13 +31,14 @@ export class Board{
         this.ball.speed_y = e.beta * this.ball.factor
     }
 
-    checkCollision() {
-        if (this.ball.x>this.hole.x-this.hole.radius && this.ball.x<this.hole.x+this.hole.radius){
-            if (this.ball.y>this.hole.y-this.hole.radius && this.ball.y<this.hole.y+this.hole.radius){
-                alert("You loose");
-                this.ball.resetToDefault(this.startX, this.startY, this.startR);
-
-            }
+    checkCollison(){
+        const base = Math.abs((this.ball.x + this.ball.radius) - (this.hole.x + this.hole.radius));
+        const hight = Math.abs((this.ball.y + this.ball.radius) - (this.hole.y + this.hole.radius));
+        const distance = Math.sqrt(Math.pow((base + hight), 2));
+        console.log(distance, this.hole.radius)
+        if (distance < this.hole.radius){
+            alert("you won")
+            this.ball.resetToDefault(this.startX, this.startY, this.startR);
         }
     }
 }

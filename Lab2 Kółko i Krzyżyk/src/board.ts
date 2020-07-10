@@ -20,6 +20,8 @@ export class Board{
     }
     
     on_key_down(key: any){
+        const playerOne = document.querySelector("#playerOne")
+        const playerTwo = document.querySelector("#playerTwo")
         switch (key){
             case "KeyQ":
                 this.markPlayerMove(0);
@@ -55,18 +57,18 @@ export class Board{
             alert("Winner: " + this.player)
             if (this.player == 1){
                 this.player_one += 1
-                document.querySelector("#playerOne").innerHTML = `player one  points: ${this.player_one}`;
+                playerOne.innerHTML = `player one  points: ${this.player_one}`;
             }
             else{
                 this.player_two += 1
-                document.querySelector("#playerTwo").innerHTML = `player two  points: ${this.player_two}`;
+                playerTwo.innerHTML = `player two  points: ${this.player_two}`;
             }
             if (this.player_one == 10 || this.player_two === 10){
                 alert(`Final winner is ${this.player}`)
                 this.player_one = 0;
-                document.querySelector("#playerOne").innerHTML = `player one  points: ${this.player_one}`;
+                playerOne.innerHTML = `player one  points: ${this.player_one}`;
                 this.player_two = 0;
-                document.querySelector("#playerTwo").innerHTML = `player two  points: ${this.player_two}`;
+                playerTwo.innerHTML = `player two  points: ${this.player_two}`;
             }
             this.reset_board();
         }
